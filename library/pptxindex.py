@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#     Copyright (c) 2019 World Wide Technology, LLC
+#     All rights reserved.
+#
+#     author: joel.king@wwt.com (@joelwking)
+#     written:  7 October 2019
+#
+#     description: Python class to manage and store (Powerpoint) presentations (and other files)
 #
 #
 #
