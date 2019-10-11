@@ -28,6 +28,8 @@ if not pi.verify_bucket_exists():
 #
 prezo = '/tmp/breakfast_and_learn_docker_minio.pptx'
 pptx_text = pi.extract_text(prezo)
+
+
 #
 # Add logic to only use scores greater or equal to 9.0
 #
@@ -38,9 +40,18 @@ for score, text in pi.rake_it(pptx_text, depth=20):
         keyword_list.append(text)
 
 #
-# Upload file
+# Create a dictionary of the keywords discovered by rake
 #
-metadata = {pi.KW_NAME : keyword_list}
+rake = {pi.KW_NAME : keyword_list}
+#
+# Create the metadata dictionary combining keywords from rake and core_properties of the presentation
+#
+core_properties = pi.get_core_properties(prezo)
+metadata = rake.copy()
+metadata.update(core_properties)
+#
+# Upload file and metadata
+#
 etag = pi.upload_file(filepath=prezo, metadata=metadata)
 #
 #

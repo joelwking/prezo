@@ -25,7 +25,7 @@ class PresentationIndex(object):
     """
         Python class to manage and store (Powerpoint) presentations (and other files)
     """
-    KW_NAME = 'keywords'
+    KW_NAME = 'rake_keywords'
     DEFAULT = 's3.amazonaws.com'                           # alternately, 'play.min.io'
 
     def __init__(self, access_key=None, secret_key=None, bucket=None, cloud=DEFAULT):
@@ -71,9 +71,9 @@ class PresentationIndex(object):
 
     def upload_file(self, filepath=None, metadata=dict(), content_type='application/octet-stream'):
         """
-            input: filepath:
-                   metadata:
-                   content_type:
+            input: filepath: location of the file on the local system
+                   metadata: associated meta data
+                   content_type: configurable S3 uses the specified default value for .pptx values
 
             returns: None indicating an error, or the etag number of the object
         """
@@ -129,7 +129,11 @@ class PresentationIndex(object):
         """
 
         text_runs = []
-        prs = Presentation(path_to_presentation)
+
+        prs = self.get_presentation_object(path_to_presentation)
+
+        if not prs:
+            return text_runs
 
         for slide in prs.slides:
             for shape in slide.shapes:
@@ -140,6 +144,52 @@ class PresentationIndex(object):
                         text_runs.append(run.text)
 
         return text_runs
+
+    def get_presentation_object(self, path_to_presentation):
+        """
+            attempt to read the presentation file and return the object
+
+            input: path_to_presentation: filename of the presentation to analyze
+
+            returns: None if any errors occur, otherwise the presentation object
+
+        """
+        try:
+            prs = Presentation(path_to_presentation)
+        except (KeyError, PackageNotFoundError) as err:
+            self.error_message = '{} {}'.format(path_to_presentation, err)
+            return None
+
+        return prs
+
+    def get_core_properties(self, path_to_presentation):
+        """"
+            each presentation has values called core_properties which contain meta data like the
+            author name, title, revision etc., which in itself, are valuable metadata
+
+            input: path_to_presentation: filename of the presentation to analyze
+
+            returns: empty dictionary if any errors occur, otherwise a dictionary of properties
+
+            reference: https://python-pptx.readthedocs.io/en/latest/api/presentation.html#coreproperties-objects
+        """
+
+        prs = self.get_presentation_object(path_to_presentation)
+
+        if not prs:
+            return dict()
+
+        return dict(author=prs.core_properties.author,
+                    comments=prs.core_properties.comments,
+                    category=prs.core_properties.category,
+                    subject=prs.core_properties.subject,
+                    title=prs.core_properties.title,
+                    keywords=prs.core_properties.keywords,
+                    revision=prs.core_properties.revision,
+                    last_modified_by=prs.core_properties.last_modified_by,
+                    created=prs.core_properties.created,
+                    content_status=prs.core_properties.content_status 
+                    )
 
     def get_metadata(self, remote_name):
         """
@@ -158,7 +208,7 @@ class PresentationIndex(object):
 
         try:
             keywords = ast.literal_eval(stat.metadata.get(self.KEYWORDS))
-        except ValueError as err:
+        except (ValueError, SyntaxError) as err:
             self.error_message = '{} {}'.format(remote_name, err)
 
         return (keywords, stat)
