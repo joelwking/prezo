@@ -9,7 +9,27 @@
 #
 #     description: sample program to demonstrate use of the class PresentationIndex
 #
-#     upload.py 
+#     usage:
+#        export BUCKET="name of bucket"
+#        export ACCESS_KEY="<access key>"
+#        export SECRET_KEY="<secret key>"
+#        export PPTX_FILES='/media/usb/upload.files'
+#        upload.py 
+#
+#
+#     Mounting USB to Linux via VirtualBox to backup files - Create a device filter under USB in Virtual Box Manager
+#
+#     Locate the device
+#         lsblk
+#       or
+#         sudo fdisk -l
+#
+#     look for /dev/sdb1   it may take a few minutes.
+#
+#     sudo mkdir /media/usb
+#     sudo mount /dev/sdb1 /media/usb
+#
+#     sudo umount /dev/sdb1
 #
 import os
 
@@ -62,6 +82,16 @@ def upload_file(pi, filepath):
 
 def get_files_to_upload(ifile='upload.files'):
     """
+        Input: ifile: Name of text file with the full path of the file(s) to upload
+        Returns: Empty list or List of files
+
+        Reference: https://www.pcworld.com/article/251406/windows-tips-copy-a-file-path-show-or-hide-extensions.html
+            Open Windows Explorer and find the photo (or document) in question.
+            Hold down the Shift key, then right-click the photo.
+            In the context menu that appears, find and click Copy as path. This copies the file location to the clipboard. 
+            (FYI, if you don’t hold down Shift when you right-click, the Copy as path option won’t appear.)
+            Press Ctrl-V to paste the text in a file. 
+
     """
     try:
         f = open(ifile, “r”) 
@@ -88,8 +118,12 @@ def main():
 
     input_files = get_files_to_upload(os.environ.get('PPTX_FILES')):
 
+    if not input_files:
+        print "{}".format('No files to upload!')
+
     for filepath in input_files:
-        upload_file(pi, filepath)
+        etag = upload_file(pi, filepath)
+        print "{} {}".format(etag, filepath)
 
 if __name__ = '__main__':
     main()
