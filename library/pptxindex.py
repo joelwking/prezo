@@ -12,13 +12,17 @@
 import ast
 from datetime import timedelta
 import os
+from urllib3.exceptions import ProtocolError
 
 from rake_nltk import Rake
+
 from pptx import Presentation
+from pptx.exc import PackageNotFoundError
 
 from minio import Minio
 from minio.error import ResponseError
 from minio.error import AccessDenied
+from minio.error import SignatureDoesNotMatch
 
 
 class PresentationIndex(object):
@@ -84,7 +88,7 @@ class PresentationIndex(object):
 
         try:
             etag = self.minioClient.fput_object(self.bucket, remote_name, filepath, metadata=metadata, content_type=content_type)
-        except ResponseError as err:
+        except (ResponseError, SignatureDoesNotMatch, UnicodeEncodeError, ProtocolError) as err:
             self.error_message = err
             return None
 
@@ -133,7 +137,7 @@ class PresentationIndex(object):
         prs = self.get_presentation_object(path_to_presentation)
 
         if not prs:
-            return text_runs
+            return ['error extracting text with pptx']
 
         for slide in prs.slides:
             for shape in slide.shapes:
@@ -158,6 +162,9 @@ class PresentationIndex(object):
             prs = Presentation(path_to_presentation)
         except (KeyError, PackageNotFoundError) as err:
             self.error_message = '{} {}'.format(path_to_presentation, err)
+            return None
+        except:
+            self.error_message = '{} {}'.format(path_to_presentation, 'bare exception')
             return None
 
         return prs

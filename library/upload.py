@@ -45,6 +45,7 @@ def upload_file(pi, filepath):
     #
     unix_filepath = filepath.replace('\\','/')                  # filepath is in Windows format
     remote_name = os.path.basename(unix_filepath)
+    remote_name = remote_name.replace('"\n', '')                # remove trailing "\n
 
     prezo = '/media/usb/{}'.format(remote_name)
     pptx_text = pi.extract_text(prezo)
@@ -55,7 +56,7 @@ def upload_file(pi, filepath):
     keyword_list = []
 
     for score, text in pi.rake_it(pptx_text, depth=20):
-        if score >= CUt_LINE:
+        if score >= CUT_LINE:
             keyword_list.append(text)
 
     #
@@ -65,7 +66,10 @@ def upload_file(pi, filepath):
     #
     # Add the original Windows filepath 
     #
-    rake['WIN_filepath'] =  filepath
+    # TODO ValueError: Invalid header value '"C:\\Users\\kingjoe\\Documents\\WWT\\projects\\APIC\\Insieme_ACI Docs\\Insieme_Bootcamp\\Mod05 - VxLAN Overlays.pptx"\n'
+    #
+    # rake['WIN_filepath'] =  filepath
+    rake['WIN_filepath'] =  remote_name
     #
     # Create the metadata dictionary combining keywords from rake and core_properties of the presentation
     #
@@ -94,7 +98,7 @@ def get_files_to_upload(ifile='upload.files'):
 
     """
     try:
-        f = open(ifile, “r”) 
+        f = open(ifile, 'r')
     except:
         print('error reading {}'.format(ifile))
         return []
@@ -116,14 +120,17 @@ def main():
         print 'bucket: {} does not exist or you do not have credentials for this bucket.'.format(bucket)
         exit()
 
-    input_files = get_files_to_upload(os.environ.get('PPTX_FILES')):
+    input_files = get_files_to_upload(os.environ.get('PPTX_FILES'))
 
     if not input_files:
         print "{}".format('No files to upload!')
 
     for filepath in input_files:
         etag = upload_file(pi, filepath)
+        if not etag:
+            etag = pi.error_message
+            
         print "{} {}".format(etag, filepath)
 
-if __name__ = '__main__':
+if __name__ == '__main__':
     main()
