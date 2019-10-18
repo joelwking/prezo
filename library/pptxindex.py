@@ -186,6 +186,9 @@ class PresentationIndex(object):
         if not prs:
             return dict()
 
+        #
+        #  TODO, don't return elements that are spaces
+        #
         return dict(author=prs.core_properties.author,
                     comments=prs.core_properties.comments,
                     category=prs.core_properties.category,
@@ -217,6 +220,14 @@ class PresentationIndex(object):
             keywords = ast.literal_eval(stat.metadata.get(self.KEYWORDS))
         except (ValueError, SyntaxError) as err:
             self.error_message = '{} {}'.format(remote_name, err)
+        
+        #
+        #  Add non RAKE keywords
+        #
+        keywords.append(stat.metadata.get('x-amz-meta-author', ''))
+        keywords.append(stat.metadata.get('x-amz-meta-title', ''))
+        keywords.append(stat.metadata.get('x-amz-meta-last_modified_by', ''))
+        keywords.append(stat.object_name)
 
         return (keywords, stat)
 
