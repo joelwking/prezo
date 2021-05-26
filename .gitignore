@@ -1,2 +1,5 @@
 #
 *.pyc
+# Ignore any data files
+data/*
+!data/README.md

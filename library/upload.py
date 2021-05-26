@@ -14,6 +14,7 @@
 #        export ACCESS_KEY="<access key>"
 #        export SECRET_KEY="<secret key>"
 #        export PPTX_FILES='/media/usb/upload.files'
+#        export CUT_LINE=9.0
 #        upload.py 
 #
 #
@@ -35,7 +36,11 @@ import os
 
 import pptxindex
 
-CUT_LINE = 9.0
+try: 
+    CUT_LINE = float(os.environ.get('CUT_LINE', 9.0))
+except ValueError:
+    CUT_LINE = 9.0
+    printt('could not convert value of CUT_LINE to float, using {}'.format(CUT_LINE))
 
 def upload_file(pi, filepath):
     """

@@ -3,3 +3,4 @@ rake-nltk
 python-pptx
 minio-py3
 fuzzywuzzy
+awscli
