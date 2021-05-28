@@ -1,36 +1,21 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-#     Copyright (c) 2019 World Wide Technology, LLC
+#     Copyright (c) 2019-2021 World Wide Technology
 #     All rights reserved.
 #
 #     author: joel.king@wwt.com (@joelwking)
-#     written:  8 October 2019
+#     written:  8 October 2019, revised 27 May 2021
 #
-#     description: sample program to demonstrate use of the class PresentationIndex
+#     description: Program to analyze and upload PowerPoint presentations to object store.
 #
 #     usage:
 #        export BUCKET="name of bucket"
 #        export ACCESS_KEY="<access key>"
 #        export SECRET_KEY="<secret key>"
-#        export PPTX_FILES='/media/usb/upload.files'
+#        export PPTX_FILES='data/upload.files'
 #        export CUT_LINE=9.0
-#        upload.py 
-#
-#
-#     Mounting USB to Linux via VirtualBox to backup files - Create a device filter under USB in Virtual Box Manager
-#
-#     Locate the device
-#         lsblk
-#       or
-#         sudo fdisk -l
-#
-#     look for /dev/sdb1   it may take a few minutes.
-#
-#     sudo mkdir /media/usb
-#     sudo mount /dev/sdb1 /media/usb
-#
-#     sudo umount /dev/sdb1
+#        python3 upload.py 
 #
 import os
 
@@ -40,28 +25,15 @@ try:
     CUT_LINE = float(os.environ.get('CUT_LINE', 9.0))
 except ValueError:
     CUT_LINE = 9.0
-    printt('could not convert value of CUT_LINE to float, using {}'.format(CUT_LINE))
+    print('ENV:WARN ... could not convert value of CUT_LINE to float, using {}'.format(CUT_LINE))
 
 def upload_file(pi, filepath):
     """
     """
-    #
-    # Analyze a presentation
-    #
-    unix_filepath = filepath.replace('\\','/')                  # filepath is in Windows format
-    remote_name = os.path.basename(unix_filepath)
-    remote_name = remote_name.replace('"\n', '')                # remove trailing "\n
-
-    prezo = '/media/usb/{}'.format(remote_name)
-    pptx_text = pi.extract_text(prezo)
-
-    #
-    # Add logic to only use scores greater or equal to 9.0
-    #
     keyword_list = []
-
+    pptx_text = pi.extract_text(filepath)                  # Extract the text from the file
     for score, text in pi.rake_it(pptx_text, depth=20):
-        if score >= CUT_LINE:
+        if score >= CUT_LINE:                              # Determine if this is relevant based on derived score
             keyword_list.append(text)
 
     #
@@ -69,22 +41,28 @@ def upload_file(pi, filepath):
     #
     rake = {pi.KW_NAME : keyword_list}
     #
-    # Add the original Windows filepath 
-    #
-    # TODO ValueError: Invalid header value '"C:\\Users\\kingjoe\\Documents\\WWT\\projects\\APIC\\Insieme_ACI Docs\\Insieme_Bootcamp\\Mod05 - VxLAN Overlays.pptx"\n'
-    #
-    # rake['WIN_filepath'] =  filepath
-    rake['WIN_filepath'] =  remote_name
-    #
     # Create the metadata dictionary combining keywords from rake and core_properties of the presentation
     #
-    core_properties = pi.get_core_properties(prezo)
+    core_properties = pi.get_core_properties(filepath)
+
     metadata = rake.copy()
+    metadata['filepath'] =  filepath
     metadata.update(core_properties)
+
+    for key, value in metadata.items():
+        if isinstance(value, (str, float, int)):
+            try:
+                metadata[key] = us_ascii([value])
+            except TypeError as err:
+                print('UPLOAD_FILE:WARN ... encountered TypeError {} {} {}'.format(type(value), key, value))
+        elif isinstance(value, list):
+            metadata[key] = us_ascii(value)
+        else:
+            print('UPLOAD_FILE:WARN ... unrecognized datatype {} {} {}'.format(type(value), key, value))
     #
     # Upload file and metadata
     #
-    etag = pi.upload_file(filepath=prezo, metadata=metadata)
+    etag = pi.upload_file(filepath=filepath, metadata=metadata)
 
     return etag
 
@@ -93,49 +71,51 @@ def get_files_to_upload(ifile='upload.files'):
     """
         Input: ifile: Name of text file with the full path of the file(s) to upload
         Returns: Empty list or List of files
-
-        Reference: https://www.pcworld.com/article/251406/windows-tips-copy-a-file-path-show-or-hide-extensions.html
-            Open Windows Explorer and find the photo (or document) in question.
-            Hold down the Shift key, then right-click the photo.
-            In the context menu that appears, find and click Copy as path. This copies the file location to the clipboard. 
-            (FYI, if you don’t hold down Shift when you right-click, the Copy as path option won’t appear.)
-            Press Ctrl-V to paste the text in a file. 
-
     """
     try:
         f = open(ifile, 'r')
     except:
-        print('error reading {}'.format(ifile))
+        print('GET_FILES_TO_UPLOAD:ERROR error reading {}'.format(ifile))
         return []
 
     files = f.readlines() 
     f.close()
     return files
 
+def us_ascii(text):
+    """
+        Only US-ASCII is permitted as meta-data, we expect a list and return a list
+        Remove leading and trailing spaces with strip(), otherwise you may encounter:
+        'S3 operation failed; code: SignatureDoesNotMatch'
+    """
+    ascii_text = []
+    for index, value in enumerate(text):
+        ascii_text.insert(index, ''.join(i for i in value if ord(i)<128).strip())
+    return ascii_text
+
 def main():
     """
     """
-    bucket = os.environ.get('BUCKET')
-
-    pi = pptxindex.PresentationIndex(access_key=os.environ.get('ACCESS_KEY'), secret_key=os.environ.get('SECRET_KEY'), bucket=bucket)
+    pi = pptxindex.PresentationIndex(access_key=os.environ.get('ACCESS_KEY'), 
+                                     secret_key=os.environ.get('SECRET_KEY'), 
+                                     bucket=os.environ.get('BUCKET'))
     #
     #  First, verify we can reach the bucket specified and our credentials are configured properly.
     #
     if not pi.verify_bucket_exists():
-        print 'bucket: {} does not exist or you do not have credentials for this bucket.'.format(bucket)
+        print('MAIN:ERROR bucket {} does not exist or you do not have credentials for this bucket.'.format(bucket))
         exit()
 
     input_files = get_files_to_upload(os.environ.get('PPTX_FILES'))
 
     if not input_files:
-        print "{}".format('No files to upload!')
+        print("MAIN:ERROR {}".format('No files to upload!'))
 
     for filepath in input_files:
         etag = upload_file(pi, filepath)
         if not etag:
             etag = pi.error_message
-            
-        print "{} {}".format(etag, filepath)
+            print("MAIN:ERROR {} {}".format(etag, filepath))
 
 if __name__ == '__main__':
     main()

@@ -20,9 +20,9 @@ from pptx import Presentation
 from pptx.exc import PackageNotFoundError
 
 from minio import Minio
-from minio.error import ResponseError
-from minio.error import AccessDenied
-from minio.error import SignatureDoesNotMatch
+from minio.error import InvalidResponseError
+from minio.error import S3Error
+from minio.error import ServerError
 
 
 class PresentationIndex(object):
@@ -63,12 +63,13 @@ class PresentationIndex(object):
         """
         try:
             buckets = self.minioClient.list_buckets()
-        except AccessDenied as err:
-            self.error_message = err
+        except (S3Error, ServerError) as err:
+            self.error_message = 'VERIFY_BUCKET_EXISTS:ERROR {}'.format(err)
             return False
 
         for bucket in buckets:
             if bucket.name == self.bucket:
+                print('VERIFY_BUCKET_EXISTS:INFO ... found bucket {}'.format(bucket.name))
                 return True
 
         return False
@@ -78,17 +79,15 @@ class PresentationIndex(object):
             input: filepath: location of the file on the local system
                    metadata: associated meta data
                    content_type: configurable S3 uses the specified default value for .pptx values
-
+ 
             returns: None indicating an error, or the etag number of the object
         """
 
         remote_name = os.path.basename(filepath)
 
-        metadata['filepath'] = filepath
-
         try:
             etag = self.minioClient.fput_object(self.bucket, remote_name, filepath, metadata=metadata, content_type=content_type)
-        except (ResponseError, SignatureDoesNotMatch, UnicodeEncodeError, ProtocolError) as err:
+        except (InvalidResponseError, S3Error, ServerError, FileNotFoundError) as err:
             self.error_message = err
             return None
 
@@ -96,10 +95,6 @@ class PresentationIndex(object):
 
     def rake_it(self, input_text, depth=10):
         """
-            For more information on rake-nltk, a Python implementation of the Rapid Automatic Keyword Extraction algorithm using NLTK.
-
-            refer to: https://csurfer.github.io/rake-nltk/_build/html/index.html
-
             input: depth: maximum number of ranked keyword phrases to return
                    input_text: a list of sentences or text to rake.
 

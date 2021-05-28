@@ -1,6 +1,6 @@
 #
 rake-nltk
 python-pptx
-minio-py3
+minio
 fuzzywuzzy
 awscli
