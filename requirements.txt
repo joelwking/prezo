@@ -4,3 +4,4 @@ python-pptx
 minio
 fuzzywuzzy
 awscli
+# python-Levenshtein
