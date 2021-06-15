@@ -25,8 +25,8 @@ COPY . /vscode
 WORKDIR /vscode
 RUN pip install -r requirements.txt
 #
-#   The virtual environment is /opt/ansible210
+#   The virtual environment is /opt/prezo
 #
 #   The work directory is /vscode
 #
-#   And, finally, the underlying directory is /workspaces/VS_CODE
+#   And, finally, the underlying directory is /workspaces/prezo

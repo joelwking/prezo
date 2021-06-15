@@ -15,7 +15,7 @@
 #        export SECRET_KEY="<secret key>"
 #        export PPTX_FILES='data/upload.files'
 #        export CUT_LINE=9.0
-#        python3 upload.py 
+#        python3 library/upload.py 
 #
 import os
 
@@ -62,9 +62,9 @@ def upload_file(pi, filepath):
     #
     # Upload file and metadata
     #
-    etag = pi.upload_file(filepath=filepath, metadata=metadata)
+    result = pi.upload_file(filepath=filepath, metadata=metadata)
 
-    return etag
+    return result
 
 
 def get_files_to_upload(ifile='upload.files'):
@@ -112,10 +112,12 @@ def main():
         print("MAIN:ERROR {}".format('No files to upload!'))
 
     for filepath in input_files:
-        etag = upload_file(pi, filepath)
-        if not etag:
-            etag = pi.error_message
-            print("MAIN:ERROR {} {}".format(etag, filepath))
+        result = upload_file(pi, filepath)
+        if not result:
+            result = pi.error_message
+            print("MAIN:ERROR {} {}".format(result, filepath))
+        else:
+            print("MAIN:OK etag:{} filepath:{}".format(result.etag, filepath))
 
 if __name__ == '__main__':
     main()
