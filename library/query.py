@@ -19,7 +19,7 @@
 #
 import os
 import argparse
-import pprint
+import yaml
 
 import pptxindex
 
@@ -135,7 +135,9 @@ def main():
     parser.add_argument('-s', action='store', dest='search_string', help='search string')
     args = parser.parse_args()
 
-    pprint.pprint(search_keywords(pi, args.search_string, download_url=args.download_url))
+    result = search_keywords(pi, args.search_string, download_url=args.download_url)
+    print('QUERY:RESULT\n')
+    print(yaml.dump(result['imdata'], default_flow_style=False))
 
 if __name__ == '__main__':
     main()

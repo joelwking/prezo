@@ -245,4 +245,4 @@ class PresentationIndex(object):
             returns: a list of objects contained in the bucket
         """
 
-        return self.minioClient.list_objects_v2(self.bucket, recursive=True)
+        return self.minioClient.list_objects(self.bucket, recursive=True)
