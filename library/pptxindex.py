@@ -31,6 +31,7 @@ class PresentationIndex(object):
     """
     KW_NAME = 'rake_keywords'
     DEFAULT = 's3.amazonaws.com'                           # alternately, 'play.min.io'
+                                                           # DEFAULT = 'fra1.digitaloceanspaces.com'
 
     def __init__(self, access_key=None, secret_key=None, bucket=None, cloud=DEFAULT):
         """

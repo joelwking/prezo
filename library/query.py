@@ -14,7 +14,7 @@
 #        export ACCESS_KEY="<access key>"
 #        export SECRET_KEY="<secret key>"
 #        
-#        python query.py -s 'infrastructure agility'
+#        python library/query.py -u -s 'infrastructure agility'
 #
 #
 import os
@@ -46,7 +46,7 @@ def search_keywords(pi, search_string, download_url=False):
             if download_url:
                 url = pi.get_download_url(object.object_name)
             else:
-                url = None
+                url = '... specify the -u argument for a download URL'
 
             result['imdata'].append(dict(object_name=object.object_name, 
                                     last_modified=object.last_modified.isoformat(),
@@ -132,12 +132,11 @@ def main():
 
     parser = argparse.ArgumentParser(description='Query metadata of object store', add_help=True)
     parser.add_argument('-u', action='store_true', default=False, dest='download_url', help='display download URL')
-    parser.add_argument('-s', action='store', dest='search_string', help='search string')
+    parser.add_argument('-s', action='store', dest='search_string', help='search string (use lowercase)')
     args = parser.parse_args()
 
     result = search_keywords(pi, args.search_string, download_url=args.download_url)
-    print('QUERY:RESULT\n')
-    print(yaml.dump(result['imdata'], default_flow_style=False))
+    print('QUERY:RESULTS\n{}'.format(yaml.dump(result['imdata'], default_flow_style=False)))
 
 if __name__ == '__main__':
     main()
