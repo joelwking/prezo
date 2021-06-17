@@ -3,3 +3,6 @@
 # Ignore any data files
 data/*
 !data/README.md
+# Ignore environment variable for the debugger
+.env/*
+!.env/README.md

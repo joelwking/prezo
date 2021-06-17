@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+    // Documentation @joelwking
+    // https://code.visualstudio.com/docs/python/debugging
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "python": "/opt/prezo/bin/python3",
+            "stopOnEntry": false,
+            "request": "launch",
+            "program": "${file}",
+            "envFile": "${workspaceFolder}/.env/debug.env",
+            "env": {"FOO": "bar"},
+            "args": ["-s joel", "-u"],
+            "console": "integratedTerminal"
+        }
+    ]
+}
