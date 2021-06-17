@@ -9,12 +9,13 @@
         {
             "name": "Python: Current File",
             "type": "python",
+            // This containter contains a virtual environment at /opt/prezo
             "python": "/opt/prezo/bin/python3",
             "stopOnEntry": false,
             "request": "launch",
             "program": "${file}",
             "envFile": "${workspaceFolder}/.env/debug.env",
-            "env": {"FOO": "bar"},
+            "env": {"BUCKET": "olive-iron"},
             "args": ["-s joel", "-u"],
             "console": "integratedTerminal"
         }
