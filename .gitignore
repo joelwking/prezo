@@ -1,4 +1,5 @@
 #
+library/__pycache__
 *.pyc
 # Ignore any data files
 data/*

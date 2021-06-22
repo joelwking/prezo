@@ -22,9 +22,8 @@ import argparse
 import yaml
 
 import pptxindex
+from credibility import Credibility
 
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
 
 DEPTH = 10
 
@@ -62,60 +61,6 @@ def search_keywords(pi, search_string, download_url=False):
     return result
 
 
-class Credibility(object):
-    """
-    """
-    BASIC = 1.0
-    FUZZ = .2
-
-    def __init__(self, search_string, metadata):
-        """
-        """
-        self.metadata = self.remove_empty(metadata)
-        self.search_string = search_string
-        self.credibility_score = 0.0
-
-        self.simple()
-        self.fuzzywuzzy()
-
-    def fuzzywuzzy(self):
-        """
-        """
-        multiplier = Credibility.FUZZ / len(self.metadata)
-
-        for text in self.metadata:
-            score = fuzz.ratio(self.search_string, self.metadata)
-            self.credibility_score = self.credibility_score + (score * multiplier)
-
-    def simple(self):
-        """
-        """
-        for text in self.metadata:
-            if self.search_string in text:
-                self.credibility_score += Credibility.BASIC
-
-    def remove_empty(self, metadata):
-        """
-            remove any empty strings present in the meta data 
-        """
-        refreshed_metadata = []
-        for item in metadata:
-            if item:
-                refreshed_metadata.append(item)
-
-        return refreshed_metadata
-
-    def credible(self):
-        """
-        """
-        self.credibility_score = round(self.credibility_score, 1)
-
-        if self.credibility_score <= 0.0:
-            return False
-        return True
-
-
-
 def main():
     """
         Search for the specified search string and return matching objects, optionally include a download URL
@@ -127,7 +72,7 @@ def main():
     #  First, verify we can reach the bucket specified and our credentials are configured properly.
     #
     if not pi.verify_bucket_exists():
-        print ('bucket: {} does not exist or you do not have credentials for this bucket.'.format(bucket))
+        print ('QUERY:BUCKET: {} does not exist or you do not have credentials for this bucket.'.format(bucket))
         exit()
 
     parser = argparse.ArgumentParser(description='Query metadata of object store', add_help=True)

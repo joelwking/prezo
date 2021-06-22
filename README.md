@@ -21,5 +21,10 @@ The Python library *rake-nltk* (Rapid Automatic Keyword Extraction algorithm) to
 #### FuzzyWuzzy
 After the objects are loaded in their target bucket(s), we use the MinIO Python SDK to query the metadata of all the objects and use the FuzzyWuzzy Python library for string matching.
 
+### References
+[Presentation Management, the New Strategy for Content Management - Chapter 1](https://www.linkedin.com/pulse/presentation-management-new-strategy-content-chapter-james-ontra/)
+
+[Presentation Management: The New Strategy for Enterprise Content (First release)](https://www.amazon.com/Presentation-Management-Strategy-Enterprise-Content-ebook/dp/B07MMV7MJ2)
+
 ### Author
-joel.king@wwt.com GitHub / GitLab: @joelwking
+Joel W. King @joelwking
