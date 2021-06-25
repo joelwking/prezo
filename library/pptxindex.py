@@ -147,7 +147,7 @@ class PresentationIndex(object):
 
     def get_presentation_object(self, path_to_presentation):
         """
-            attempt to read the presentation file and return the object
+            Attempt to read the presentation file and return the object
 
             input: path_to_presentation: filename of the presentation to analyze
 
@@ -167,7 +167,7 @@ class PresentationIndex(object):
 
     def get_core_properties(self, path_to_presentation):
         """"
-            each presentation has values called core_properties which contain meta data like the
+            Each presentation has values called core_properties which contain meta data like the
             author name, title, revision etc., which in itself, are valuable metadata
 
             input: path_to_presentation: filename of the presentation to analyze
@@ -226,6 +226,17 @@ class PresentationIndex(object):
         keywords.append(stat.object_name)
 
         return (keywords, stat)
+
+    def us_ascii(self, text):
+        """
+            Only US-ASCII is permitted as meta-data, we expect a list and return a list
+            Remove leading and trailing spaces with strip(), otherwise you may encounter:
+            'S3 operation failed; code: SignatureDoesNotMatch'
+        """
+        ascii_text = []
+        for index, value in enumerate(text):
+            ascii_text.insert(index, ''.join(i for i in value if ord(i)<128).strip())
+        return ascii_text
 
     def get_download_url(self, remote_name, expires=1):
         """

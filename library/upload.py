@@ -18,7 +18,6 @@
 #        python3 library/upload.py 
 #
 import os
-
 import pptxindex
 
 try: 
@@ -29,6 +28,11 @@ except ValueError:
 
 def upload_file(pi, filepath):
     """
+        Extract the text from the presentation. Use Rake to return the score and text. If the text
+        is deemed sufficiently relevant, append it to the list of keywords.
+
+        Retrieve the core_properties from the presentation, and use this along with the keywords as metadata.
+        Validate the metatdata. Upload the file as an object in the target bucket.
     """
     keyword_list = []
     pptx_text = pi.extract_text(filepath)                  # Extract the text from the file
@@ -52,11 +56,11 @@ def upload_file(pi, filepath):
     for key, value in metadata.items():
         if isinstance(value, (str, float, int)):
             try:
-                metadata[key] = us_ascii([value])
+                metadata[key] = pi.us_ascii([value])
             except TypeError as err:
                 print('UPLOAD_FILE:WARN ... encountered TypeError {} {} {}'.format(type(value), key, value))
         elif isinstance(value, list):
-            metadata[key] = us_ascii(value)
+            metadata[key] = pi.us_ascii(value)
         else:
             print('UPLOAD_FILE:WARN ... unrecognized datatype {} {} {}'.format(type(value), key, value))
     #
@@ -65,7 +69,6 @@ def upload_file(pi, filepath):
     result = pi.upload_file(filepath=filepath, metadata=metadata)
 
     return result
-
 
 def get_files_to_upload(ifile='upload.files'):
     """
@@ -82,26 +85,17 @@ def get_files_to_upload(ifile='upload.files'):
     f.close()
     return files
 
-def us_ascii(text):
-    """
-        Only US-ASCII is permitted as meta-data, we expect a list and return a list
-        Remove leading and trailing spaces with strip(), otherwise you may encounter:
-        'S3 operation failed; code: SignatureDoesNotMatch'
-    """
-    ascii_text = []
-    for index, value in enumerate(text):
-        ascii_text.insert(index, ''.join(i for i in value if ord(i)<128).strip())
-    return ascii_text
-
 def main():
     """
+        Instanciate a connection object with the keys and name of the bucket. Verify the bucket exists,
+        ensuring that we can reach the bucket specified with the credentials provided.
+        Get a list of files to upload, and call method `upload file` to create the metadata and upload
+        the file to the object store.
     """
     pi = pptxindex.PresentationIndex(access_key=os.environ.get('ACCESS_KEY'), 
                                      secret_key=os.environ.get('SECRET_KEY'), 
                                      bucket=os.environ.get('BUCKET'))
-    #
-    #  First, verify we can reach the bucket specified and our credentials are configured properly.
-    #
+
     if not pi.verify_bucket_exists():
         print('MAIN:ERROR bucket {} does not exist or you do not have credentials for this bucket.'.format(bucket))
         exit()
