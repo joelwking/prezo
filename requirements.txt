@@ -1,7 +1,13 @@
 #
+# Core Libraries
+#
 rake-nltk
 python-pptx
 minio
 fuzzywuzzy
+python-Levenshtein       # Optional, a preformance enhancement
+#
+# Linting and debugging
+#
+flake8
 awscli
-# python-Levenshtein

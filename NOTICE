@@ -1,0 +1,15 @@
+prezo
+Copyright (c) 2021 World Wide Technology
+All rights reserved.
+
+This project includes software developed at World Wide Technology
+
+This project includes:
+
+   - logging               Logging examples from https://towardsdatascience.com/the-reusable-python-logging-template-for-all-your-data-science-apps-551697c8540  Author: Yash Prakash
+   - rake-nltk             RAKE short for Rapid Automatic Keyword Extraction algorithm, determine key phrases in a body of text. Author: Vishwas B Sharma
+   - python-pptx           Python library for creating and updating PowerPoint (.pptx) Author: Steve Canny
+   - MinIO                 Python SDK for Amazon S3 Compatible Cloud Storage Author: https://min.io/about
+   - fuzzywuzzy            Python library for comparing text, developed and released by [SeatGeek](https://github.com/seatgeek/fuzzywuzzy)
+   - python-Levenshtein    Python extension for computing string edit distances and similarities. Author: Antti Haapala
+   - awscli                AWS Command Line Interface is a unified tool that provides a consistent interface for interacting with all parts of AWS.

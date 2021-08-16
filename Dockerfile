@@ -14,11 +14,13 @@ LABEL maintainer="Joel W. King" email="joel.king@wwt.com"
 RUN apt update && \
     apt -y install git && \
     apt -y install python3-venv && \
+    apt -y install python3-dev && \
+    apt -y install build-essential && \
     pip3 install --upgrade pip 
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 #
-# We need the requirements.txt and the requirements.yml files for installation
+# We need the requirements.txt files for installation
 #
 RUN mkdir /vscode
 COPY . /vscode
