@@ -45,6 +45,7 @@ class PresentationIndex(object):
         self.minioClient = None
         self.cloud = cloud
         self.error_message = None
+        self.message = None
         self.KEYWORDS = 'x-amz-meta-{}'.format(PresentationIndex.KW_NAME)
 
         self.init_minio()
@@ -70,7 +71,7 @@ class PresentationIndex(object):
 
         for bucket in buckets:
             if bucket.name == self.bucket:
-                print('VERIFY_BUCKET_EXISTS:INFO ... found bucket {}'.format(bucket.name))
+                self.message = 'VERIFY_BUCKET_EXISTS:INFO ... found bucket {}'.format(bucket.name)
                 return True
 
         return False
