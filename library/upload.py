@@ -10,21 +10,23 @@
 #     description: Program to analyze and upload PowerPoint presentations to object store.
 #
 #     usage:
-#        export BUCKET="name of bucket"
-#        export ACCESS_KEY="<access key>"
-#        export SECRET_KEY="<secret key>"
-#        export PPTX_FILES='data/upload.files'
-#        export CUT_LINE=9.0
+#        export PZ_BUCKET="name of bucket"
+#        export PZ_ACCESS_KEY="<access key>"
+#        export PZ_SECRET_KEY="<secret key>"
+#        export PZ_PPTX_FILES='data/upload.files'
+#        export PZ_CUT_LINE=9.0
+#        export PZ_DEBUG=10
 #        python3 library/upload.py 
 #
 import os
 import pptxindex
 from logger import logger
 
-log = logger.Logger(logger_name='upload', level=20).setup()
+level = int(os.environ.get('PZ_DEBUG', 20))
+log = logger.Logger(logger_name='upload', level=level).setup()
 
 try: 
-    CUT_LINE = float(os.environ.get('CUT_LINE', 9.0))
+    CUT_LINE = float(os.environ.get('PZ_CUT_LINE', 9.0))
 except ValueError:
     CUT_LINE = 9.0
     log.warning('ENV: could not convert value of CUT_LINE to float, using {}'.format(CUT_LINE))
@@ -61,11 +63,11 @@ def upload_file(pi, filepath):
             try:
                 metadata[key] = pi.us_ascii([value])
             except TypeError as err:
-                log.warning('UPLOAD_FILE: encountered TypeError {} {} {}'.format(type(value), key, value))
+                log.debug('UPLOAD_FILE: encountered TypeError {} {} {}'.format(type(value), key, value))
         elif isinstance(value, list):
             metadata[key] = pi.us_ascii(value)
         else:
-            log.warning('UPLOAD_FILE: unrecognized datatype {} {} {}'.format(type(value), key, value))
+            log.debug('UPLOAD_FILE: unrecognized datatype {} {} {}'.format(type(value), key, value))
     #
     # Upload file and metadata
     #
@@ -97,9 +99,9 @@ def main():
     """
 
     options = dict(
-        bucket=os.environ.get('BUCKET', 'nobucket'),
-        access_key=os.environ.get('ACCESS_KEY', 'noaccesskey'),
-        secret_key=os.environ.get('SECRET_KEY', 'nosecret'))
+        bucket=os.environ.get('PZ_BUCKET', 'nobucket'),
+        access_key=os.environ.get('PZ_ACCESS_KEY', 'noaccesskey'),
+        secret_key=os.environ.get('PZ_SECRET_KEY', 'nosecret'))
 
     pi = pptxindex.PresentationIndex(**options)
 
@@ -107,7 +109,7 @@ def main():
         log.error('MAIN: bucket {} does not exist or you do not have credentials for this bucket.'.format(options['bucket']))
         exit()
 
-    input_files = get_files_to_upload(os.environ.get('PPTX_FILES'))
+    input_files = get_files_to_upload(os.environ.get('PZ_PPTX_FILES'))
 
     if not input_files:
         log.error("MAIN: {}".format('No files to upload!'))

@@ -10,9 +10,10 @@
 #     description: query objects in S3 and search keywords
 #
 #     usage:
-#        export BUCKET="name of bucket"
-#        export ACCESS_KEY="<access key>"
-#        export SECRET_KEY="<secret key>"
+#        export PZ_BUCKET="name of bucket"
+#        export PZ_ACCESS_KEY="<access key>"
+#        export PZ_SECRET_KEY="<secret key>"
+#        export PZ_DEBUG=10
 #        
 #        python library/query.py -u -s 'infrastructure agility'
 #
@@ -25,8 +26,9 @@ import pptxindex
 from credibility import Credibility
 
 from logger import logger
-
-log = logger.Logger(logger_name='query', level=20).setup()
+level = int(os.environ.get('PZ_DEBUG', 20))
+log = logger.Logger(logger_name='query', level=level).setup()
+log.debug('Executing with log level {}'.format(level))
 
 DEPTH = 10
 
@@ -77,9 +79,9 @@ def main():
     args = parser.parse_args()
 
     options = dict(
-        bucket=os.environ.get('BUCKET', 'nobucket'),
-        access_key=os.environ.get('ACCESS_KEY', 'noaccesskey'),
-        secret_key=os.environ.get('SECRET_KEY', 'nosecret'))
+        bucket=os.environ.get('PZ_BUCKET', 'nobucket'),
+        access_key=os.environ.get('PZ_ACCESS_KEY', 'noaccesskey'),
+        secret_key=os.environ.get('PZ_SECRET_KEY', 'nosecret'))
 
     pi = pptxindex.PresentationIndex(**options)
     #
