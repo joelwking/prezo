@@ -19,12 +19,15 @@
 #
 import os
 import pptxindex
+from logger import logger
+
+log = logger.Logger(logger_name='upload', level=20).setup()
 
 try: 
     CUT_LINE = float(os.environ.get('CUT_LINE', 9.0))
 except ValueError:
     CUT_LINE = 9.0
-    print('ENV:WARN ... could not convert value of CUT_LINE to float, using {}'.format(CUT_LINE))
+    log.warning('ENV: could not convert value of CUT_LINE to float, using {}'.format(CUT_LINE))
 
 def upload_file(pi, filepath):
     """
@@ -58,11 +61,11 @@ def upload_file(pi, filepath):
             try:
                 metadata[key] = pi.us_ascii([value])
             except TypeError as err:
-                print('UPLOAD_FILE:WARN ... encountered TypeError {} {} {}'.format(type(value), key, value))
+                log.warning('UPLOAD_FILE: encountered TypeError {} {} {}'.format(type(value), key, value))
         elif isinstance(value, list):
             metadata[key] = pi.us_ascii(value)
         else:
-            print('UPLOAD_FILE:WARN ... unrecognized datatype {} {} {}'.format(type(value), key, value))
+            log.warning('UPLOAD_FILE: unrecognized datatype {} {} {}'.format(type(value), key, value))
     #
     # Upload file and metadata
     #
@@ -78,7 +81,7 @@ def get_files_to_upload(ifile='upload.files'):
     try:
         f = open(ifile, 'r')
     except:
-        print('GET_FILES_TO_UPLOAD:ERROR error reading {}'.format(ifile))
+        log.error('GET_FILES_TO_UPLOAD: error reading {}'.format(ifile))
         return []
 
     files = f.readlines() 
@@ -92,26 +95,30 @@ def main():
         Get a list of files to upload, and call method `upload file` to create the metadata and upload
         the file to the object store.
     """
-    pi = pptxindex.PresentationIndex(access_key=os.environ.get('ACCESS_KEY'), 
-                                     secret_key=os.environ.get('SECRET_KEY'), 
-                                     bucket=os.environ.get('BUCKET'))
+
+    options = dict(
+        bucket=os.environ.get('BUCKET', 'nobucket'),
+        access_key=os.environ.get('ACCESS_KEY', 'noaccesskey'),
+        secret_key=os.environ.get('SECRET_KEY', 'nosecret'))
+
+    pi = pptxindex.PresentationIndex(**options)
 
     if not pi.verify_bucket_exists():
-        print('MAIN:ERROR bucket {} does not exist or you do not have credentials for this bucket.'.format(bucket))
+        log.error('MAIN: bucket {} does not exist or you do not have credentials for this bucket.'.format(options['bucket']))
         exit()
 
     input_files = get_files_to_upload(os.environ.get('PPTX_FILES'))
 
     if not input_files:
-        print("MAIN:ERROR {}".format('No files to upload!'))
+        log.error("MAIN: {}".format('No files to upload!'))
 
     for filepath in input_files:
         result = upload_file(pi, filepath)
         if not result:
             result = pi.error_message
-            print("MAIN:ERROR {} {}".format(result, filepath))
+            log.error("MAIN: {} {}".format(result, filepath))
         else:
-            print("MAIN:OK etag:{} filepath:{}".format(result.etag, filepath))
+            log.info("MAIN: etag:{} filepath:{}".format(result.etag, filepath))
 
 if __name__ == '__main__':
     main()

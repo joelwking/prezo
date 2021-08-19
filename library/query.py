@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#     Copyright (c) 2019 World Wide Technology, LLC
+#     Copyright (c) 2021 World Wide Technology
 #     All rights reserved.
 #
 #     author: joel.king@wwt.com (@joelwking)
-#     written:  15 October 2019
+#     written:  15 October 2019, revised 18 August 2021
 #
 #     description: query objects in S3 and search keywords
 #
@@ -24,6 +24,9 @@ import yaml
 import pptxindex
 from credibility import Credibility
 
+from logger import logger
+
+log = logger.Logger(logger_name='query', level=20).setup()
 
 DEPTH = 10
 
@@ -65,23 +68,29 @@ def main():
     """
         Search for the specified search string and return matching objects, optionally include a download URL
     """
-    bucket = os.environ.get('BUCKET')
-
-    pi = pptxindex.PresentationIndex(access_key=os.environ.get('ACCESS_KEY'), secret_key=os.environ.get('SECRET_KEY'), bucket=bucket)
     #
-    #  First, verify we can reach the bucket specified and our credentials are configured properly.
+    #  Get the arguments
     #
-    if not pi.verify_bucket_exists():
-        print ('QUERY:BUCKET: {} does not exist or you do not have credentials for this bucket.'.format(bucket))
-        exit()
-
     parser = argparse.ArgumentParser(description='Query metadata of object store', add_help=True)
     parser.add_argument('-u', action='store_true', default=False, dest='download_url', help='display download URL')
     parser.add_argument('-s', action='store', dest='search_string', help='search string (use lowercase)')
     args = parser.parse_args()
 
+    options = dict(
+        bucket=os.environ.get('BUCKET', 'nobucket'),
+        access_key=os.environ.get('ACCESS_KEY', 'noaccesskey'),
+        secret_key=os.environ.get('SECRET_KEY', 'nosecret'))
+
+    pi = pptxindex.PresentationIndex(**options)
+    #
+    #  Verify we can reach the bucket specified and our credentials are configured properly.
+    #
+    if not pi.verify_bucket_exists():
+        log.error('MAIN: bucket {} does not exist or you do not have credentials for this bucket.'.format(options['bucket']))
+        exit()
+
     result = search_keywords(pi, args.search_string, download_url=args.download_url)
-    print('QUERY:RESULTS\n{}'.format(yaml.dump(result['imdata'], default_flow_style=False)))
+    log.info('RESULTS:\n{}'.format(yaml.dump(result['imdata'], default_flow_style=False)))
 
 if __name__ == '__main__':
     main()
