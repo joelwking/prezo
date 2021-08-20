@@ -6,6 +6,7 @@ data/*
 !data/README.md
 # Ignore environment variable for the debugger
 .env/*
+!.env/run.env
 !.env/README.md
 # Ignore log files
 log/*

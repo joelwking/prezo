@@ -22,8 +22,12 @@ import os
 import pptxindex
 from logger import logger
 
-level = int(os.environ.get('PZ_DEBUG', 20))
-log = logger.Logger(logger_name='upload', level=level).setup()
+opts = dict(
+        level = int(os.environ.get('PZ_DEBUG', 20)),
+        file_name=(os.environ.get('PZ_LOG_FILE')),
+        logger_name='upload')
+        
+log = logger.Logger(**opts).setup()
 
 try: 
     CUT_LINE = float(os.environ.get('PZ_CUT_LINE', 9.0))

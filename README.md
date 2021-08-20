@@ -31,6 +31,10 @@ TODO
 
 ### Environment Variables
 
+We use a number of environment variables to specify credentials and other configuration options.
+
+These can be specified on the  `docker run` command by using `--env-file .env/run.env`
+
 #### Upload
 
 To upload files, program `upload.py` uses these environment variables to learn the bucket name, secret and access key, and the filename of the input file.
