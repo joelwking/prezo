@@ -13,6 +13,7 @@ import ast
 from datetime import timedelta
 import os
 from urllib3.exceptions import ProtocolError
+import urllib.parse
 
 from rake_nltk import Rake
 
@@ -83,9 +84,11 @@ class PresentationIndex(object):
                    content_type: configurable S3 uses the specified default value for .pptx values
  
             returns: None indicating an error, or the etag number of the object
+
+            Filenames may include spaces, thus, urllib.parse.quote_plus
         """
 
-        remote_name = os.path.basename(filepath)
+        remote_name = urllib.parse.quote_plus(os.path.basename(filepath))
 
         try:
             etag = self.minioClient.fput_object(self.bucket, remote_name, filepath, metadata=metadata, content_type=content_type)

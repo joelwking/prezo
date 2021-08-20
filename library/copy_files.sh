@@ -22,13 +22,13 @@
 # 
 #       the output will be as:
 #  
-#          cp -p  /Users/kingjoe/Documents/WWT/NS_VT_Calls/__Traffic_Analysis/NS_VT_Veterans_Day.pptx data/NS_VT_Veterans_Day.pptx
+#          cp -p  '/Users/kingjoe/Documents/WWT/NS_VT_Calls/__Traffic_Analysis/NS_VT_Veterans_Day.pptx' 'data/NS_VT_Veterans_Day.pptx'
 #
 #       this copies files into the Development environment for testing.
 #
 while IFS= read -r line; do
   fbname=$(basename "$line")
-  printf "cp -p  %s data/%s\n" "$line" "$fbname"
+  printf "cp -p  '%s' 'data/%s'\n" "$line" "$fbname"
 done
 
 
