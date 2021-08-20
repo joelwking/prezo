@@ -86,7 +86,7 @@ def get_files_to_upload(ifile='upload.files'):
         log.error('GET_FILES_TO_UPLOAD: error reading {}'.format(ifile))
         return []
 
-    files = f.readlines() 
+    files = f.read().splitlines()
     f.close()
     return files
 
