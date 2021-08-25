@@ -22,13 +22,13 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 #
 # We need the requirements.txt files for installation
 #
-RUN mkdir /vscode
-COPY . /vscode
-WORKDIR /vscode
+RUN mkdir /prezo
+COPY . /prezo
+WORKDIR /prezo
 RUN pip install -r requirements.txt
 #
 #   The virtual environment is /opt/prezo
 #
-#   The work directory is /vscode
+#   The work directory is /prezo
 #
 #   And, finally, the underlying directory is /workspaces/prezo
