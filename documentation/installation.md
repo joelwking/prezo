@@ -4,20 +4,37 @@ Installation Instructions
 First create a copy of this repository on your local system.
 
 ```shell
-git clone 
+git clone https://github.com/joelwking/prezo.git
+cd prezo
 ```
 
-Then build the Docker image.
+Then build the Docker image and verify.
 
 ```shell
-docker build -f . -t joelwking/prezo:1.0 .
+docker build -f ./Dockerfile -t joelwking/prezo:1.0 .
 docker images joelwking/prezo
+```
+Identify the files you wish to upload. In this example, I created a target directory `~/prezo/data` and copied all the files with an extension of `.pptx` to the target directory.
+
+`scp ./AnsibleFest2018/*.pptx administrator@olive-iron.sandbox.wwtatc.local:prezo/data/`
+
+Create your `upload.file` to create an inventory of the files to be uploaded.
+
+Enter the directory where you copied the files (`~/prezo/data`). Create the inventory file and prepend the directory of the container volume.
+
+```shell
+~/prezo/data$ ls >>upload.files
+```
+Using `vi` as an editor, you can prepend the container path to all the lines in the inventory file.
+
+```vi
+:%s!^!/opt/powerpoint/!
 ```
 
 Run the image, 
 
 ```shell
-docker run --volume /tmp/powerpoint:/opt/powerpoint:ro -it joelwking/prezo:1.0  /bin/bash
+docker run --volume /home/administrator/prezo/data:/opt/powerpoint:ro -it joelwking/prezo:1.0  /bin/bash
 
 ```
 > Note: to exit the container, leaving the container running, detach from the running container, use ^P^Q (hold Ctrl , press P , press Q , release Ctrl ).
@@ -46,14 +63,17 @@ You can create the bucket either by using the AWS console (GUI) or the AWS CLI. 
 export PZ_BUCKET="bucket_name"
 export PZ_ACCESS_KEY="your_access_key"
 export PZ_SECRET_KEY="your_secret_key"
-export PZ_PPTX_FILES="file_name_of_input_file"
+export PZ_PPTX_FILES="/opt/powerpoint/upload.file"
+export PZ_LOG_FILE="/prezo/log/prezo.log"
 ```
+
+Execute the `upload.py` program to extract keywords and upload the files.
 
 ```shell
 cd /prezo
 python3 library/upload.py
-cat /tmp/upload.log
 ```
+>Note: If you configured the filename of a log file you can view it: `cat /prezo/log/prezo.log`
 
 #### Query
 
