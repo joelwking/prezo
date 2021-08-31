@@ -82,16 +82,30 @@ def upload_file(pi, filepath):
 def get_files_to_upload(ifile='upload.files'):
     """
         Input: ifile: Name of text file with the full path of the file(s) to upload
+                      or the name of a directory
         Returns: Empty list or List of files
     """
-    try:
-        f = open(ifile, 'r')
-    except:
-        log.error('GET_FILES_TO_UPLOAD: error reading {}'.format(ifile))
-        return []
+    if os.path.isfile(ifile):
+        log.debug('GET_FILES_TO_UPLOAD: processing normal file: {}'.format(ifile))
+        try:
+            f = open(ifile, 'r')
+        except:
+            log.error('GET_FILES_TO_UPLOAD: error reading {}'.format(ifile))
+            return []
 
-    files = f.read().splitlines()
-    f.close()
+        files = f.read().splitlines()
+        f.close()
+    else:
+        log.debug('GET_FILES_TO_UPLOAD: processing directory: {}'.format(ifile))
+        files = []
+        ifile = os.path.normpath(ifile)   # remove trailing slash(s), if present
+        try:
+            for file in os.listdir(ifile):
+                if file.endswith('.pptx') or file.endswith('.ppt'):
+                    files.append('{}/{}'.format(ifile, file))
+        except FileNotFoundError as e:
+            log.error('GET_FILES_TO_UPLOAD: {}'.format(e))
+
     return files
 
 def main():

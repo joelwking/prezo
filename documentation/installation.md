@@ -14,7 +14,14 @@ Then build the Docker image and verify.
 docker build -f ./Dockerfile -t joelwking/prezo:1.0 .
 docker images joelwking/prezo
 ```
-Identify the files you wish to upload. In this example, I created a target directory `~/prezo/data` and copied all the files with an extension of `.pptx` to the target directory.
+
+Identify the files you wish to upload. You can specify either a directory, or an input file.
+
+The easy method is to copy all your Powerpoint files to a directory (`cp -p ` will preserve the timestamp) and then specify the directory name using the environment variable `PZ_PPTX_FILES`. Any file ending with '.pptx' or '.ppt' are uploaded.
+
+Alternately, you can create an input file to inventory the files you wish to upload.
+
+In this example, I created a target directory `~/prezo/data` and copied all the files with an extension of `.pptx` to the target directory.
 
 `scp ./AnsibleFest2018/*.pptx administrator@olive-iron.sandbox.wwtatc.local:prezo/data/`
 
@@ -53,7 +60,7 @@ These can be specified on the  `docker run` command by using `--env-file .env/ru
 
 #### Upload
 
-To upload files, program `upload.py` uses these environment variables to learn the bucket name, secret and access key, and the filename of the input file.
+To upload files, program `upload.py` uses these environment variables to learn the bucket name, secret and access key, and the directory or filename of the input file.
 
 When using AWS S3 buckets, navigate to the IAM menu, create (or select a user) which has the policy of `AmazonS3FullAccess` and under the `security credentials` tab. The access keys allow you to use the AWS CLI, and these programs using the MinIO SDK. You can have a maximum of two access keys (active or inactive) at a time.
 

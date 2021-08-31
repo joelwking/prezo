@@ -9,9 +9,11 @@
 #
 #     description: generates text output from dictionary
 #
+import yaml
 
 def format_output(query_results):
     """
+        Generate a tabular output of the information returned from a query
     """
 
     print('RESULTS:\n{}'.format(yaml.dump(query_results, default_flow_style=False)))
