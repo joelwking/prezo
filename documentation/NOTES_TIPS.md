@@ -3,6 +3,27 @@ NOTES_TIPS
 
 A few things learned along the way.
 
+Creating an input inventory file
+--------------------------------
+
+In this example, I created a target directory `~/prezo/data` and copied all the files with an extension of `.pptx` to the target directory.
+
+`scp ./AnsibleFest2018/*.pptx administrator@olive-iron.sandbox.wwtatc.local:prezo/data/`
+
+Create your `upload.file` to create an inventory of the files to be uploaded.
+
+Enter the directory where you copied the files (`~/prezo/data`). Create the inventory file and prepend the directory of the container volume.
+
+```shell
+~/prezo/data$ ls >>upload.files
+```
+Using `vi` as an editor, you can prepend the container path to all the lines in the inventory file.
+
+```vi
+:%s!^!/opt/powerpoint/!
+```
+Then save the modified file. You have created an inventory file listing the full path of the file(s) you wish to upload.
+
 Stupid Windows Tricks
 ---------------------
 

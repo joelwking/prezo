@@ -225,6 +225,8 @@ class PresentationIndex(object):
         #  Add non RAKE keywords
         #
         keywords.append(stat.metadata.get('x-amz-meta-author', ''))
+        keywords.append(stat.metadata.get('x-amz-meta-subject', ''))
+        keywords.append(stat.metadata.get('x-amz-meta-keywords', ''))
         keywords.append(stat.metadata.get('x-amz-meta-title', ''))
         keywords.append(stat.metadata.get('x-amz-meta-last_modified_by', ''))
         keywords.append(stat.object_name)

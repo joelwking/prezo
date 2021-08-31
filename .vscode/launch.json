@@ -15,7 +15,7 @@
             "request": "launch",
             "program": "${file}",
             "envFile": "${workspaceFolder}/.env/debug.env",
-            "env": {"BUCKET": "olive-iron"},
+            "env": {"PZ_BUCKET": "olive-iron"},
             "args": ["-s joel", "-u"],
             "console": "integratedTerminal"
         }

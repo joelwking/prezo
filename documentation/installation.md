@@ -19,26 +19,9 @@ Identify the files you wish to upload. You can specify either a directory, or an
 
 The easy method is to copy all your Powerpoint files to a directory (`cp -p ` will preserve the timestamp) and then specify the directory name using the environment variable `PZ_PPTX_FILES`. Any file ending with '.pptx' or '.ppt' are uploaded.
 
-Alternately, you can create an input file to inventory the files you wish to upload.
+Alternately, you can create an input file to inventory the presentations you wish to upload. In `NOTES_TIPS.md` there is an explaination on how to create the input file. Because we are running in a container, the best approach is to copy all the presentation to a directory, and mount that directory to the container. 
 
-In this example, I created a target directory `~/prezo/data` and copied all the files with an extension of `.pptx` to the target directory.
-
-`scp ./AnsibleFest2018/*.pptx administrator@olive-iron.sandbox.wwtatc.local:prezo/data/`
-
-Create your `upload.file` to create an inventory of the files to be uploaded.
-
-Enter the directory where you copied the files (`~/prezo/data`). Create the inventory file and prepend the directory of the container volume.
-
-```shell
-~/prezo/data$ ls >>upload.files
-```
-Using `vi` as an editor, you can prepend the container path to all the lines in the inventory file.
-
-```vi
-:%s!^!/opt/powerpoint/!
-```
-
-Run the image, 
+Run the image, mapping the directory to the container.
 
 ```shell
 docker run --volume /home/administrator/prezo/data:/opt/powerpoint:ro -it joelwking/prezo:1.0  /bin/bash

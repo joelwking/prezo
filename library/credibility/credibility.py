@@ -23,9 +23,10 @@ class Credibility(object):
 
     def __init__(self, search_string, metadata):
         """
+            Metadata is a list of strings
         """
         self.metadata = self.remove_empty(metadata)
-        self.search_string = search_string
+        self.search_string = search_string.strip()
         self.credibility_score = 0.0
 
         self.simple()
@@ -33,6 +34,7 @@ class Credibility(object):
 
     def fuzzywuzzy(self):
         """
+            Use Fuzzywuzzy to determine credibility
         """
         multiplier = Credibility.FUZZ / len(self.metadata)
 
