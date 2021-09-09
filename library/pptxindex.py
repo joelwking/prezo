@@ -11,6 +11,7 @@
 #
 import ast
 from datetime import timedelta
+import datetime
 import os
 from urllib3.exceptions import ProtocolError
 import urllib.parse
@@ -174,6 +175,8 @@ class PresentationIndex(object):
             Each presentation has values called core_properties which contain meta data like the
             author name, title, revision etc., which in itself, are valuable metadata
 
+            The datatype of these fields are one of integer, string or datetime.
+
             input: path_to_presentation: filename of the presentation to analyze
 
             returns: empty dictionary if any errors occur, otherwise a dictionary of properties
@@ -186,20 +189,30 @@ class PresentationIndex(object):
         if not prs:
             return dict()
 
-        #
-        #  TODO, don't return elements that are spaces
-        #
-        return dict(author=prs.core_properties.author,
-                    comments=prs.core_properties.comments,
-                    category=prs.core_properties.category,
-                    subject=prs.core_properties.subject,
-                    title=prs.core_properties.title,
-                    keywords=prs.core_properties.keywords,
-                    revision=prs.core_properties.revision,
-                    last_modified_by=prs.core_properties.last_modified_by,
-                    created=prs.core_properties.created,
-                    content_status=prs.core_properties.content_status 
+        fields = dict(author=prs.core_properties.author,
+                      comments=prs.core_properties.comments,
+                      category=prs.core_properties.category,
+                      subject=prs.core_properties.subject,
+                      title=prs.core_properties.title,
+                      keywords=prs.core_properties.keywords,
+                      revision=prs.core_properties.revision,
+                      last_modified_by=prs.core_properties.last_modified_by,
+                      created=prs.core_properties.created,
+                      identifier=prs.core_properties.identifier,
+                      language=prs.core_properties.language,
+                      last_printed=prs.core_properties.last_printed,
+                      version=prs.core_properties.version,
+                      modified=prs.core_properties.modified,
+                      content_status=prs.core_properties.content_status 
                     )
+        # Remove empty fields, convert datetime to string
+        for key, value in list(fields.items()):
+            if value in ('', ' ') or value == None:                   
+                del fields[key]
+            if isinstance(value, datetime.datetime):
+                fields[key] = value.strftime("%d-%b-%Y %H:%M:%S")
+
+        return fields
 
     def get_metadata(self, remote_name):
         """
