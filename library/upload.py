@@ -16,6 +16,7 @@
 #        export PZ_PPTX_FILES='data/upload.files'
 #        export PZ_CUT_LINE=9.0
 #        export PZ_DEBUG=10
+#        export PZ_DEPTH=20
 #        python3 library/upload.py 
 #
 import os
@@ -35,6 +36,12 @@ except ValueError:
     CUT_LINE = 9.0
     log.warning('ENV: could not convert value of CUT_LINE to float, using {}'.format(CUT_LINE))
 
+try: 
+    DEPTH = int(os.environ.get('PZ_DEPTH', 20))
+except ValueError:
+    DEPTH = 20
+    log.warning('ENV: could not convert value of DEPTH to int, using {}'.format(DEPTH))
+
 def upload_file(pi, filepath):
     """
         Extract the text from the presentation. Use Rake to return the score and text. If the text
@@ -45,7 +52,7 @@ def upload_file(pi, filepath):
     """
     keyword_list = []
     pptx_text = pi.extract_text(filepath)                  # Extract the text from the file
-    for score, text in pi.rake_it(pptx_text, depth=20):
+    for score, text in pi.rake_it(pptx_text, depth=DEPTH):
         if score >= CUT_LINE:                              # Determine if this is relevant based on derived score
             keyword_list.append(text)
 
