@@ -22,6 +22,7 @@ from pptx import Presentation
 from pptx.exc import PackageNotFoundError
 
 from minio import Minio
+from minio.commonconfig import Tags
 from minio.error import InvalidResponseError
 from minio.error import S3Error
 from minio.error import ServerError
@@ -78,7 +79,7 @@ class PresentationIndex(object):
 
         return False
 
-    def upload_file(self, filepath=None, metadata=dict(), content_type='application/octet-stream'):
+    def upload_file(self, filepath=None, metadata=dict(), tags=None, content_type='application/octet-stream'):
         """
             input: filepath: location of the file on the local system
                    metadata: associated meta data
@@ -92,7 +93,7 @@ class PresentationIndex(object):
         remote_name = urllib.parse.quote_plus(os.path.basename(filepath))
 
         try:
-            etag = self.minioClient.fput_object(self.bucket, remote_name, filepath, metadata=metadata, content_type=content_type)
+            etag = self.minioClient.fput_object(self.bucket, remote_name, filepath, metadata=metadata, tags=tags, content_type=content_type)
         except (InvalidResponseError, S3Error, ServerError, FileNotFoundError) as err:
             self.error_message = err
             return None
