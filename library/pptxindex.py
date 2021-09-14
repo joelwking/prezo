@@ -283,7 +283,7 @@ class PresentationIndex(object):
         """
             input: dictionary representing tags to associate with the object
 
-            returns: Tags object
+            returns: Tags object or None
 
             You can only have 10 tags per object for S3
         """

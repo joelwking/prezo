@@ -4,6 +4,7 @@ library/__pycache__
 # Ignore any data files
 data/*
 !data/README.md
+!data/tags.json
 # Ignore environment variable for the debugger
 .env/*
 !.env/run.env

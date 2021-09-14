@@ -14,12 +14,14 @@
 #        export PZ_ACCESS_KEY="<access key>"
 #        export PZ_SECRET_KEY="<secret key>"
 #        export PZ_PPTX_FILES='data/upload.files'
+#        export PZ_TAGS='data/tags.json'
 #        export PZ_CUT_LINE=9.0
 #        export PZ_DEBUG=10
 #        export PZ_DEPTH=20
 #        python3 library/upload.py 
 #
 import os
+import json
 import pptxindex
 from logger import logger
 
@@ -42,7 +44,7 @@ except ValueError:
     DEPTH = 20
     log.warning('ENV: could not convert value of DEPTH to int, using {}'.format(DEPTH))
 
-def upload_file(pi, filepath):
+def upload_file(pi, filepath, tags):
     """
         Extract the text from the presentation. Use Rake to return the score and text. If the text
         is deemed sufficiently relevant, append it to the list of keywords.
@@ -82,7 +84,7 @@ def upload_file(pi, filepath):
     #
     # Upload file and metadata
     #
-    result = pi.upload_file(filepath=filepath, metadata=metadata)
+    result = pi.upload_file(filepath=filepath, metadata=metadata, tags=tags)
 
     return result
 
@@ -115,6 +117,27 @@ def get_files_to_upload(ifile='upload.files'):
 
     return files
 
+def read_tags():
+    """
+        Attempt to read tags from a specified JSON file.
+
+        Return empty dictionary if unsuccessful, otherwise a dictionary of tags
+    """
+    tags_file = os.environ.get('PZ_TAGS', None)
+    log.debug('READ_TAGS: reading tags file: {}'.format(tags_file))
+    if tags_file:
+        try:
+            f = open(tags_file, 'r')
+            tags = f.read()
+            f.close()
+        except FileNotFoundError as e:
+            log.warning('READ_TAGS: error reading tags file: {}'.format(e))
+            return dict()
+
+        return json.loads(tags)
+
+    return dict()
+
 def main():
     """
         Instanciate a connection object with the keys and name of the bucket. Verify the bucket exists,
@@ -139,8 +162,10 @@ def main():
     if not input_files:
         log.error("MAIN: {}".format('No files to upload!'))
 
+    tags = pi.set_tags(read_tags())
+
     for filepath in input_files:
-        result = upload_file(pi, filepath)
+        result = upload_file(pi, filepath, tags=tags)
         if not result:
             result = pi.error_message
             log.error("MAIN: {} {}".format(result, filepath))
