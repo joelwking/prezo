@@ -278,3 +278,27 @@ class PresentationIndex(object):
         """
 
         return self.minioClient.list_objects(self.bucket, recursive=True)
+
+    def set_tags(self, tags, max_tags=10):
+        """
+            input: dictionary representing tags to associate with the object
+
+            returns: Tags object
+
+            You can only have 10 tags per object for S3
+        """
+        #
+        #  TODO, the key length 128 bytes, the value length 256
+        #  TODO, bucket or object, for now, only object
+        #
+        result = None
+        if tags and isinstance(tags, dict):
+            result = Tags(for_object=True)
+            count = 0
+            for key, value in tags.items():
+                count += 1
+                result[key] = value
+                if count >= max_tags:
+                    continue
+
+        return result
