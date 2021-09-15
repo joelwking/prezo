@@ -57,6 +57,17 @@ export PZ_PPTX_FILES="/opt/powerpoint/upload.file"
 export PZ_LOG_FILE="/prezo/log/prezo.log"
 ```
 
+##### Tags
+
+Each object may have up to 10 associate *tags*, or key, value pairs for grouping objects with the same tag and value. The tag key can be up to 128 bytes, the value up to 256 bytes. To associate *tags* with the uploaded presentations, create a JSON file of key, value pairs and specify the name of the file in the environment variable `PZ_TAGs`.
+
+```shell
+export PZ_TAGS='data/tags.json'
+```
+All of the uploadef file(s) will contain the specified tags.
+
+##### Upload files
+
 Execute the `upload.py` program to extract keywords and upload the files.
 
 ```shell
