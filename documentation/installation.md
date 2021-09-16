@@ -15,11 +15,31 @@ docker build -f ./Dockerfile -t joelwking/prezo:1.0 .
 docker images joelwking/prezo
 ```
 
+Input Files
+-----------
+
 Identify the files you wish to upload. You can specify either a directory, or an input file.
 
-The easy method is to copy all your Powerpoint files to a directory (`cp -p ` will preserve the timestamp) and then specify the directory name using the environment variable `PZ_PPTX_FILES`. Any file ending with '.pptx' or '.ppt' are uploaded.
+The easy method is to copy all your Powerpoint files to a directory (`cp -p ` will preserve the timestamp) and then specify the directory name using the environment variable `PZ_PPTX_FILES`. Any file ending with '.pptx' are uploaded.
+
+There is a sample Bash script `copy_files.sh` to assist in locating all the presentation files on your hard drive and copy them to a USB drive.
+
+Dot Underscore Files
+--------------------
+
+If you specify a directory rather than input file, the [Dot Underscore](
+https://apple.stackexchange.com/questions/14980/why-are-dot-underscore-files-created-and-how-can-i-avoid-them) files (files beginning with a `._`) should be ignored or removed from the source directory. If you have copied your presentation files to a USB drive, you can remove these files either manually or by using the following command:
+
+```shell
+/Volumes/KINGSTON/data % find . -type f -name '._*' -delete
+```
+
+If you do not remove these files, they will be uploaded, but the metadata for the RAKE keywords will contain the string `error extracting text`.
 
 Alternately, you can create an input file to inventory the presentations you wish to upload. In `NOTES_TIPS.md` there is an explaination on how to create the input file. Because we are running in a container, the best approach is to copy all the presentation to a directory, and mount that directory to the container. 
+
+Run the Image
+-------------
 
 Run the image, mapping the directory to the container.
 
@@ -31,19 +51,25 @@ docker run --volume /home/administrator/prezo/data:/opt/powerpoint:ro -it joelwk
 
 You will be attached to the container, in the work directory of `/prezo`. Your Powerpoint files are at `/opt/powerpoint`.
 
-### Loading presentation to an object store
+Loading presentation to an object store
+---------------------------------------
 
-TODO
+Loading the presentation files to an object store requires specifiying several environment variables for authentication, logging and setting options for program execution.
 
-### Environment Variables
+Environment Variables
+---------------------
 
 We use a number of environment variables to specify credentials and other configuration options.
 
 These can be specified on the  `docker run` command by using `--env-file .env/run.env`
 
-#### Upload
+Upload
+------
 
 To upload files, program `upload.py` uses these environment variables to learn the bucket name, secret and access key, and the directory or filename of the input file.
+
+Create the Target Bucket
+------------------------
 
 When using AWS S3 buckets, navigate to the IAM menu, create (or select a user) which has the policy of `AmazonS3FullAccess` and under the `security credentials` tab. The access keys allow you to use the AWS CLI, and these programs using the MinIO SDK. You can have a maximum of two access keys (active or inactive) at a time.
 
@@ -57,16 +83,18 @@ export PZ_PPTX_FILES="/opt/powerpoint/upload.file"
 export PZ_LOG_FILE="/prezo/log/prezo.log"
 ```
 
-##### Tags
+Tags
+----
 
 Each object may have up to 10 associate *tags*, or key, value pairs for grouping objects with the same tag and value. The tag key can be up to 128 bytes, the value up to 256 bytes. To associate *tags* with the uploaded presentations, create a JSON file of key, value pairs and specify the name of the file in the environment variable `PZ_TAGs`.
 
 ```shell
 export PZ_TAGS='data/tags.json'
 ```
-All of the uploadef file(s) will contain the specified tags.
+All uploaded file(s) will contain the specified tags. To apply specify tags to a subset of your files, segregate the files in separate directories and create a `tags.json` file for each directory. Execute the upload for each directory.
 
-##### Upload files
+Upload files
+------------
 
 Execute the `upload.py` program to extract keywords and upload the files.
 
@@ -76,7 +104,8 @@ python3 library/upload.py
 ```
 >Note: If you configured the filename of a log file you can view it: `cat /prezo/log/prezo.log`
 
-#### Query
+Query Files
+-----------
 
 To query files, program `query.py` uses the environment variables above, sans `PZ_PPTX_FILES`.
 

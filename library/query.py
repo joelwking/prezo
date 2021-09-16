@@ -54,7 +54,6 @@ def search_keywords(pi, search_string, depth, download_url=False):
 
             result['imdata'].append(dict(object_name=object.object_name, 
                                     last_modified=object.last_modified.isoformat(),
-                                    etag=object.etag,
                                     credibility=cob.credibility_score,
                                     metadata=cob.metadata,
                                     url=url))

@@ -229,12 +229,12 @@ class PresentationIndex(object):
         keywords = []
 
         stat = self.minioClient.stat_object(self.bucket, remote_name)
-
-        try:
-            keywords = ast.literal_eval(stat.metadata.get(self.KEYWORDS))
-        except (ValueError, SyntaxError) as err:
-            self.error_message = '{} {}'.format(remote_name, err)
-        
+        ## TODO Identify why evaluating the RAKE keywords was necessary
+        # try:
+        #    keywords = ast.literal_eval(stat.metadata.get(self.KEYWORDS))
+        #except (ValueError, SyntaxError) as err:
+        #    self.error_message = '{} {}'.format(remote_name, err)
+        keywords.append(stat.metadata.get(self.KEYWORDS, ''))
         #
         #  Add non RAKE keywords
         #

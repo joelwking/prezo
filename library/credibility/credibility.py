@@ -18,7 +18,7 @@ class Credibility(object):
         how closely two strings match. In our use case, we have metadata assocated with an
         object, and the goal is to determine how closely the search string matches the metadata
     """
-    BASIC = 1.0
+    BASIC = 2.0
     FUZZ = .2
 
     def __init__(self, search_string, metadata):
@@ -64,6 +64,7 @@ class Credibility(object):
 
     def credible(self):
         """
+            return True or False to determine if we believe the result is credible
         """
         self.credibility_score = round(self.credibility_score, 1)
 

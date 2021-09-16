@@ -47,7 +47,7 @@ Minio is an open source object storage system which provides a consistent view o
 The Python library *python-pptx* is used to extract the text and tags from each PowerPoint presentation.
 
 #### Rapid Automatic Keyword Extraction algorithm
-The Python library *rake-nltk* (Rapid Automatic Keyword Extraction algorithm) is used to determine key phrases and loading them as metadata to the object.
+The Python library *rake-nltk* (Rapid Automatic Keyword Extraction algorithm) is used to determine key phrases and loading them as metadata to the object. For a keyword extraction tutorial, see [4 NLP keyword extraction tutorial with RAKE and Maui](README.md#references).
 
 #### FuzzyWuzzy
 After the objects are loaded in their target bucket(s), we use the MinIO Python SDK to query the metadata of all the objects and use the FuzzyWuzzy Python library for string matching.
@@ -61,7 +61,9 @@ Installation instructions can be found in `documentation/installation.md`.
 
 [2] [Shufflr](https://shufflrr.com) is a commercial slide library software offering, enabling composing new PowerPoint presentations from existing PowerPoint and other visual content. 
 
-[3][Unstructured Data](https://searchbusinessanalytics.techtarget.com/definition/unstructured-data)
+[3] [Unstructured Data](https://searchbusinessanalytics.techtarget.com/definition/unstructured-data)
+
+[4] [NLP keyword extraction tutorial with RAKE and Maui](https://www.airpair.com/nlp/keyword-extraction-tutorial)
 
 ### Author
 Joel W. King @joelwking

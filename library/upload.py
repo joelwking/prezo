@@ -107,10 +107,10 @@ def get_files_to_upload(ifile='upload.files'):
     else:
         log.debug('GET_FILES_TO_UPLOAD: processing directory: {}'.format(ifile))
         files = []
-        ifile = os.path.normpath(ifile)   # remove trailing slash(s), if present
+        ifile = os.path.normpath(ifile)          # remove trailing slash(s), if present
         try:
-            for file in os.listdir(ifile):
-                if file.endswith('.pptx') or file.endswith('.ppt'):
+            for file in os.listdir(ifile):       # TODO move to a function and ignore '._' files
+                if file.endswith('.pptx'):
                     files.append('{}/{}'.format(ifile, file))
         except FileNotFoundError as e:
             log.error('GET_FILES_TO_UPLOAD: {}'.format(e))
