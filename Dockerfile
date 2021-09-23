@@ -27,6 +27,10 @@ COPY . /prezo
 WORKDIR /prezo
 RUN pip install -r requirements.txt
 #
+# Install (download) stopwords
+#
+RUN echo 'import nltk; nltk.download("stopwords")' | python3
+#
 #   The virtual environment is /opt/prezo
 #
 #   The work directory is /prezo
