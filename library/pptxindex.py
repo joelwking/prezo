@@ -35,6 +35,8 @@ class PresentationIndex(object):
     KW_NAME = 'rake_keywords'
     DEFAULT = 's3.amazonaws.com'                           # alternately, 'play.min.io'
                                                            # DEFAULT = 'fra1.digitaloceanspaces.com'
+    MAX_KEY_LEN = 128                                      # Max tag key length
+    MAX_VALUE_LEN = 256                                    # Max tag value length
 
     def __init__(self, access_key=None, secret_key=None, bucket=None, cloud=DEFAULT):
         """
@@ -285,10 +287,9 @@ class PresentationIndex(object):
 
             returns: Tags object or None
 
-            You can only have 10 tags per object for S3
+            You can only have 10 tags per object for S3, we ignore excessive tags or tags with excessive length
         """
         #
-        #  TODO, the key length 128 bytes, the value length 256
         #  TODO, bucket or object, for now, only object
         #
         result = None
@@ -296,9 +297,11 @@ class PresentationIndex(object):
             result = Tags(for_object=True)
             count = 0
             for key, value in tags.items():
-                count += 1
+                if len(key) > PresentationIndex.MAX_KEY_LEN or len(value) > PresentationIndex.MAX_VALUE_LEN:
+                    self.error_message = 'key or value length exceeds max values'
+                    continue
                 result[key] = value
                 if count >= max_tags:
                     continue
-
+                count += 1
         return result
