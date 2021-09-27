@@ -2,6 +2,8 @@
 
 *prezo* - Presentation Management
 
+Experience a technical talk on this solution by attending [DevNet Create 2021](https://developer.cisco.com/devnetcreate/) Tech topic 2: Simplicity & Cloud-First,  *Do you have any slides …….?*.
+
 This project aims to enable sharing of PowerPoint presentations while using metadata to locate relevant content.
 
 I began working on this solution to address my frustration with a lack of a suitable content management system enabling sharing presentations and their associated artifacts. [vbrick](https://vbrick.com/) enables a video content management system that includes storing the associated presentation files and tagging for internal versus external access and analytics.
