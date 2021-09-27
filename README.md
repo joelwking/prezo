@@ -21,8 +21,8 @@ What isn't addressed:
 
 With this aside, let's look at the solution components.
 
-### Theme
-
+Theme
+-----
 I have worked for many years as a Technical Marketing Engineer at several technology companies and, more recently, as the organizer for a Meetup group focused on enabling programmability, automation, and Infrastructure as Code to develop NetDevOps skills.
 
 These roles require technical knowledge of the solution components, marketing understanding, and communication skills.
@@ -37,7 +37,8 @@ Powerpoint files are primarily [3 - unstructured data](README.md#references). Th
 
 In this project, we use the MinIO Python SDK to upload, search and retrieve objects stored in Amazon S3 (Amazon Simple Storage Service), the object storage service of AWS. This session demonstrates how the open-source Python library *python-pptx* and *RAKE* (Rapid Automatic Keyword Extraction) are used to extract and analyze keywords from PowerPoint files providing metadata to these objects stored in S3.
 
-### Components
+Components
+----------
 This solution includes the following tools.
 
 #### Minio
@@ -52,10 +53,12 @@ The Python library *rake-nltk* (Rapid Automatic Keyword Extraction algorithm) de
 #### FuzzyWuzzy
 After the objects are loaded in their target bucket(s), we use the MinIO Python SDK to query the metadata of all the objects and use the FuzzyWuzzy Python library for string matching.
 
-### Installation
+Installation
+------------
 Installation instructions can be found in `documentation/installation.md`.
 
-### References
+References
+----------
 
 [1] AlexAnndra Ontra, James Ontra (2018) [Presentation Management: The New Strategy for Enterprise Content (First release)](https://www.amazon.com/Presentation-Management-Strategy-Enterprise-Content-ebook/dp/B07MMV7MJ2)
 
@@ -65,5 +68,6 @@ Installation instructions can be found in `documentation/installation.md`.
 
 [4] [NLP keyword extraction tutorial with RAKE and Maui](https://www.airpair.com/nlp/keyword-extraction-tutorial)
 
-### Author
+Author
+------
 Joel W. King @joelwking
