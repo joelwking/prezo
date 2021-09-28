@@ -5,7 +5,7 @@ rake-nltk
 python-pptx
 minio
 fuzzywuzzy
-python-Levenshtein       # Optional, a preformance enhancement
+python-Levenshtein       # Optional, a performance enhancement used by rake-nltk
 #
 # Linting and debugging
 #
