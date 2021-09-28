@@ -66,7 +66,7 @@ References
 
 [2] [Shufflr](https://shufflrr.com) is a commercial slide library software offering, enabling composing new PowerPoint presentations from existing PowerPoint and other visual content. 
 
-[3] [Unstructured Data](https://searchbusinessanalytics.techtarget.com/definition/unstructured-data)
+[3] [What is unstructured data?](https://searchbusinessanalytics.techtarget.com/definition/unstructured-data)
 
 [4] [NLP keyword extraction tutorial with RAKE and Maui](https://www.airpair.com/nlp/keyword-extraction-tutorial)
 
