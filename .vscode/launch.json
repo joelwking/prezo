@@ -13,10 +13,12 @@
             "python": "/opt/prezo/bin/python3",
             "stopOnEntry": false,
             "request": "launch",
-            "program": "${file}",
+            // "program": "${file}",
+            // use the following format of absolute path so the imports work properly
+            "program": "/workspaces/prezo/library/query.py",
             "envFile": "${workspaceFolder}/.env/debug.env",
             "env": {"PZ_BUCKET": "olive-iron"},
-            "args": ["-s DevNet", "-u"],
+            "args": ["-s Template", "-u"],
             "console": "integratedTerminal"
         }
     ]

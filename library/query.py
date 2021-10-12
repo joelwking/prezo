@@ -45,7 +45,7 @@ def search_keywords(pi, search_string, depth, download_url=False):
 
     for object in pi.list_objects():
         (metadata, stat) = pi.get_metadata(object.object_name)
-        cob = Credibility(search_string, metadata)
+        cob = Credibility(search_string, metadata, object.object_name)
         if cob.credible():
             if download_url:
                 url = pi.get_download_url(object.object_name)
@@ -74,7 +74,7 @@ def main():
     #
     parser = argparse.ArgumentParser(description='Query metadata of object store', add_help=True)
     parser.add_argument('-u', action='store_true', default=False, dest='download_url', help='display download URL')
-    parser.add_argument('-s', action='store', dest='search_string', help='search string (use lowercase)')
+    parser.add_argument('-s', action='store', dest='search_string', help='search string (case sensitive)')
     parser.add_argument('-d', action='store', dest='depth', type=int, default=DEPTH, help='number of results to return')
     args = parser.parse_args()
 
