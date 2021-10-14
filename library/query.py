@@ -14,7 +14,7 @@
 #        export PZ_ACCESS_KEY="<access key>"
 #        export PZ_SECRET_KEY="<secret key>"
 #        export PZ_DEBUG=10
-#        
+#
 #        python library/query.py -u -s 'infrastructure agility'
 #
 #
@@ -31,6 +31,7 @@ log = logger.Logger(logger_name='query', level=level).setup()
 log.debug('Executing with log level {}'.format(level))
 
 DEPTH = 10                                                 # Default number of results to return
+
 
 def search_keywords(pi, search_string, depth, download_url=False):
     """
@@ -52,14 +53,14 @@ def search_keywords(pi, search_string, depth, download_url=False):
             else:
                 url = '... specify the -u argument for a download URL'
 
-            result['imdata'].append(dict(object_name=object.object_name, 
+            result['imdata'].append(dict(object_name=object.object_name,
                                     last_modified=object.last_modified.isoformat(),
                                     credibility=cob.credibility_score,
                                     metadata=cob.metadata,
                                     url=url))
-    
+
     # sort the results in decending order by the credibility score
-    ordered_results = sorted(result['imdata'], key = lambda i: i['credibility'], reverse=True)
+    ordered_results = sorted(result['imdata'], key=lambda i: i['credibility'], reverse=True)
 
     result['imdata'] = ordered_results[0:depth]
     return result
@@ -94,6 +95,7 @@ def main():
     result = search_keywords(pi, args.search_string, args.depth, download_url=args.download_url)
     log.debug('RESULTS:\n{}'.format(yaml.dump(result['imdata'], default_flow_style=False)))
     formatter.format_output(result['imdata'])
+
 
 if __name__ == '__main__':
     main()

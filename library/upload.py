@@ -18,7 +18,7 @@
 #        export PZ_CUT_LINE=9.0
 #        export PZ_DEBUG=10
 #        export PZ_DEPTH=20
-#        python3 library/upload.py 
+#        python3 library/upload.py
 #
 import os
 import json
@@ -26,23 +26,24 @@ import pptxindex
 from logger import logger
 
 opts = dict(
-        level = int(os.environ.get('PZ_DEBUG', 20)),
+        level=int(os.environ.get('PZ_DEBUG', 20)),
         file_name=(os.environ.get('PZ_LOG_FILE')),
         logger_name='upload')
-        
+
 log = logger.Logger(**opts).setup()
 
-try: 
+try:
     CUT_LINE = float(os.environ.get('PZ_CUT_LINE', 9.0))
 except ValueError:
     CUT_LINE = 9.0
     log.warning('ENV: could not convert value of CUT_LINE to float, using {}'.format(CUT_LINE))
 
-try: 
+try:
     DEPTH = int(os.environ.get('PZ_DEPTH', 20))
 except ValueError:
     DEPTH = 20
     log.warning('ENV: could not convert value of DEPTH to int, using {}'.format(DEPTH))
+
 
 def upload_file(pi, filepath, tags):
     """
@@ -61,14 +62,14 @@ def upload_file(pi, filepath, tags):
     #
     # Create a dictionary of the keywords discovered by rake
     #
-    rake = {pi.KW_NAME : keyword_list}
+    rake = {pi.KW_NAME: keyword_list}
     #
     # Create the metadata dictionary combining keywords from rake and core_properties of the presentation
     #
     core_properties = pi.get_core_properties(filepath)
 
     metadata = rake.copy()
-    metadata['filepath'] =  filepath
+    metadata['filepath'] = filepath
     metadata.update(core_properties)
 
     for key, value in metadata.items():
@@ -87,6 +88,7 @@ def upload_file(pi, filepath, tags):
     result = pi.upload_file(filepath=filepath, metadata=metadata, tags=tags)
 
     return result
+
 
 def get_files_to_upload(ifile='upload.files'):
     """
@@ -117,6 +119,7 @@ def get_files_to_upload(ifile='upload.files'):
 
     return files
 
+
 def read_tags():
     """
         Attempt to read tags from a specified JSON file.
@@ -137,6 +140,7 @@ def read_tags():
         return json.loads(tags)
 
     return dict()
+
 
 def main():
     """
@@ -171,6 +175,7 @@ def main():
             log.error("MAIN: {} {}".format(result, filepath))
         else:
             log.info("MAIN: etag:{} filepath:{}".format(result.etag, filepath))
+
 
 if __name__ == '__main__':
     main()
