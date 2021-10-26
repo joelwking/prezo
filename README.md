@@ -2,7 +2,7 @@
 
 *prezo* - Presentation Management
 
-Experience a technical talk on this solution by attending [DevNet Create 2021](https://developer.cisco.com/devnetcreate/) Tech topic 2: Simplicity & Cloud-First,  *Do you have any slides …….?*.
+Experience a technical talk on this solution by attending [DevNet Create 2021](https://developer.cisco.com/devnetcreate/) Tech topic 2: Simplicity & Cloud-First,  *Do you have any slides …….?*. The recording of the presentation is available for viewing on [DevNet](https://developer.cisco.com/devnetcreate/2021/) or by searching for the DevNet [Youtube](https://www.youtube.com/results?search_query=devnet+create+2021) channel.
 
 This project aims to enable sharing of PowerPoint presentations while using metadata to locate relevant content.
 
